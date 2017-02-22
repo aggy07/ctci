@@ -24,7 +24,7 @@ def is_intersection(ll_a, ll_b):
         current_b = current_b.next
         len_b += 1
 
-    if tail_a != tail_b:
+    if tail_a is not tail_b:
         return None
         
     if len_a > len_b:
@@ -43,10 +43,30 @@ def is_intersection(ll_a, ll_b):
     for i in range(diff):
         longer = longer.next
 
-    while longer != shorter:
+    while longer is not shorter:
             longer = longer.next
             shorter = shorter.next
     return longer
+
+def is_intersection2(ll1, ll2):
+    if ll1.tail is not ll2.tail:
+        return False
+
+    shorter = ll1 if len(ll1) < len(ll2) else ll2
+    longer = ll2 if len(ll1) < len(ll2) else ll1
+
+    diff = len(longer) - len(shorter)
+
+    shorter_node, longer_node = shorter.head, longer.head
+
+    for i in range(diff):
+        longer_node = longer_node.next
+
+    while shorter_node is not longer_node:
+        shorter_node = shorter_node.next
+        longer_node = longer_node.next
+
+    return longer_node
     
 
 
@@ -61,10 +81,12 @@ if __name__ == '__main__':
     node = ll_a.head.next.next
     node.next = ll_b.head.next 
     ll_b.head.next = node
+    ll_a.tail = ll_b.tail
     print(ll_a)
     print(ll_b)
     print()
     print(is_intersection(ll_a, ll_b))
+    print(is_intersection2(ll_a, ll_b))
 
 # Opportunities: My example led me to the hidden assumption that the lists would be in sync.  So I failed to compare each element of one list to all elements of the other.  Reading the hints showed that if I had been comparing the tail nodes that would have been fine.
 # Opportunities: modularize, cleanup the nasty conditionals with ternary syntax, correct the ll.tail issue
