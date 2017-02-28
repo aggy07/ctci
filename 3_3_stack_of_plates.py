@@ -2,86 +2,133 @@
 # Push and pop should work the same as for a single stack.  
 # Impleent pop_at(index) to pop on specific sub-stack.
 # Hints:#64, #87
+# https://github.com/careercup/CtCI-6th-Edition-Python/blob/master/Chapter3/33StackOfPlates.py
+# After attempting to use the MultiStack class from previous problems I checked the above link and used it's Python solution.
 
-class MultiStack:
-    
-    def __init__(self, stacksize):
-        self.numstacks = 1
-        self.array = [0] * (stacksize * self.numstacks)
-        self.sizes = [0] * self.numstacks
-        self.stacksize = stacksize
+import unittest
 
-    def Push(self, item):
-        stacknum=self.numstacks-1
-        if self.IsFull(stacknum): # always check the top stack
-            self.numstacks += 1 # add stack to the top
-            self.array.append(item)
-            for i in range(self.stacksize-1):
-                self.array.append(0) # append additional empty elements less the already added zeroth element
-            self.sizes.append(1)
+class Node(object):
+
+    def __init__(self, value):
+        self.value = value
+        self.above = None
+        self.below = None
+
+class Stack(object):
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.size = 0
+        self.top = None
+        self.bottom = None
+
+    def is_full(self):
+        return self.size == self.capacity
+
+    def is_empty(self):
+        return self.size == 0
+
+    def join(self, above, below):
+        if below:
+            below.above = above
+        if above:
+            above.below = below
+
+    def push(self, v):
+        if self.size >= self.capacity:
+            return False
+        self.size += 1
+        n = Node(v)
+        if self.size ==1:
+            self.bottom = n
+        self.join(n, self.top)
+        self.top = n
+        return True
+
+    def pop(self):
+        if not self.top:
+            return None
+        t = self.top
+        self.top = self.top.below
+        self.size -= 1
+        return t.value
+
+    def remove_bottom(self):
+        b = self.bottom
+        self.bottom = self.bottom.above
+        if self.bottom:
+            self.bottom.below = None
+        self.size -= 1
+        return b.value
+
+class SetOfStacks(object):
+    def __init__(self, capacity):
+        self.capacity = capacity
+        self.stacks = []
+
+    def get_last_stack(self):
+        if not self.stacks:
+            return None
+        return self.stacks[-1]
+
+    def is_empty(self):
+        last = self.get_last_stack()
+        return not last or last.is_empty()
+
+    def push(self, v):
+        last = self.get_last_stack()
+        if last and not last.is_full():
+            last.push(v)
         else:
-            self.sizes[stacknum] += 1
-            self.array[self.IndexOfTop(stacknum)] = item
+            stack = Stack(self.capacity)
+            stack.push(v)
+            self.stacks.append(stack)
 
-    def Pop(self):
-        stacknum=self.numstacks-1
-        if self.IsEmpty(stacknum):
-            self.numstacks -= 1
-            for i in range(self.stacksize-1):
-                self.array.pop() # pop one stack's worth of [0] elements
-            self.sizes.pop()
-            value = self.array[self.IndexOfTop(stacknum)-1]
-            self.array[self.IndexOfTop(stacknum)-1] = 0 # should get top element of next stack
-        else:
-            value = self.array[self.IndexOfTop(stacknum)]
-            self.array[self.IndexOfTop(stacknum)] = 0
-            self.sizes[stacknum] -= 1
-        return value
+    def pop(self):
+        last = self.get_last_stack()
+        if not last:
+            return None
+        v = last.pop()
+        if last.size == 0:
+            del self.stacks[-1]
+        return v
 
-    def Peek(self):
-        stacknum=self.numstacks-1
-        print('Peek stacknum', stacknum)
-        print('Peek array', self.array)
-        if self.IsEmpty(stacknum):
-            self.array[self.IndexOfTop(stacknum)-1]
-        return self.array[self.IndexOfTop(stacknum)]
+    def pop_at(self, index):
+        return self.left_shift(index, True)
 
-    def IsFull(self, stacknum):
-        return self.sizes[stacknum] == self.stacksize
+    def left_shift(self, index, remove_top):
+        stack = self.stacks[index]
+        removed_item = stack.pop() if remove_top else stack.remove_bottom()
+        if stack.is_empty():
+            del self.stacks[index]
+        elif len(self.stacks) > index + 1:
+            v = self.left_shift(index + 1, False)
+            stack.push(v)
+        return removed_item
 
-    def IsEmpty(self, stacknum):
-        return self.sizes[stacknum] == 0
 
-    def IndexOfTop(self, stacknum):
-        print('IofT stacknum', stacknum)
-        print('IofT stacksize', self.stacksize)
-        offset = stacknum * self.stacksize
-        print('IofT offset', offset)
-        print('IofT stack {} size {}'.format(stacknum, self.sizes[stacknum]))
-        return offset + self.sizes[stacknum] - 1 
+class Tests(unittest.TestCase):
+    def test_stacks(self):
+        stacks = SetOfStacks(5)
+        for i in range(35):
+            stacks.push(i)
+        lst = []
+        for _ in range(35):
+            lst.append(stacks.pop())
+        self.assertEqual(lst, list(reversed(range(35))))
+
+    def test_pop_at(self):
+        stacks = SetOfStacks(5)
+        for i in range(35):
+            stacks.push(i)
+        lst = []
+        for _ in range(31):
+            lst.append(stacks.pop_at(0))
+        self.assertEqual(lst, list(range(4, 35)))
 
 if __name__ == '__main__':
+    unittest.main()
 
-    newstack = MultiStack(2)
-    print(newstack.IsEmpty(0))
-    newstack.Push(3)
-    print(newstack.Peek())
-    print(newstack.IsEmpty(0))
-    newstack.Push(2)
-    print(newstack.Peek())
-    newstack.Push(4)
-    print(newstack.Peek())
-    newstack.Push(5)
-    print(newstack.Peek())
-    newstack.Push(6)
-    print('Peek newly added 6 on stack 2: ', newstack.Peek())
-    print('Pop 6', newstack.Pop())
-    print('Peek top of stack 1: ',newstack.Peek())
-    print('Pop top of stack 1: ',newstack.Pop())
-    print('Peek 0th of stack 1: ',newstack.Peek())
-    print('Pop 0th of stack 1: ', newstack.Pop())
-    print('Peek top of stack 0: ',newstack.Peek())
-    print('Pop top of stack 0: ',newstack.Pop())
-    print('Peek 0th of stack 0: ',newstack.Peek())
 
-# Opportunities: the book solution uses a list of lists instead of the multistack implementation.  Same things need to happen but simpler to deal with.
+
+
+
