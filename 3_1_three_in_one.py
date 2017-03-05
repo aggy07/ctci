@@ -51,6 +51,6 @@ def ThreeInOne():
     print(newstack.Pop(1))
     print(newstack.Peek(1))
     newstack.Push(3, 1)
-    print(newstack)
+
 
 ThreeInOne()
