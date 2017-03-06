@@ -17,7 +17,6 @@ class Queue():
         if self.first is None:
             self.first = self.last
 
-
     def dequeue(self):
         if self.first is None:
             return False
@@ -35,6 +34,15 @@ class Queue():
         if self.first is None:
             return False
         return self.first.value
+
+    def size(self):
+        result = 0
+        node = self.first
+        while node:
+            result += 1
+            node = node.next
+        return result
+
 
     def is_empty(self):
         return self.first == None
