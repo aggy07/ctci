@@ -8,7 +8,7 @@ class Queue():
         self.first = None
         self.last = None
 
-    def add(self, value):
+    def enqueue(self, value):
         qn = QueueNode(value)
         if self.last is not None:
             self.last.next = qn
@@ -18,7 +18,7 @@ class Queue():
             self.first = self.last
 
 
-    def remove(self):
+    def dequeue(self):
         if self.first is None:
             return False
         
@@ -51,10 +51,10 @@ class Tests(unittest.TestCase):
     def test_queue(self):
         q = Queue()
         for i in range(35):
-            q.add(i)
+            q.enqueue(i)
         remove_list = []
         for _ in range(35):
-            remove_list.append(q.remove())
+            remove_list.append(q.dequeue())
         self.assertEqual(remove_list, list(range(35)))
 
 if __name__ == '__main__':
