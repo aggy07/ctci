@@ -1,9 +1,14 @@
 # From transcribed from https://interactivepython.org/runestone/static/pythonds/Graphs/Implementation.html
+import sys
 
 class Vertex:
     def __init__(self, key):
         self.id = key
         self.connectedTo = {}
+        self.color = 'white'
+        self.dist = sys.maxsize
+        self.pred = None
+
 
     def addNeighbor(self,nbr,weight=0):
         self.connectedTo[nbr] = weight
@@ -19,6 +24,25 @@ class Vertex:
 
     def getWeight(self,nbr):
         return self.connectedTo[nbr]
+
+    def setColor(self, color):
+        self.color = color
+
+    def setDistance(self, d):
+        self.dist = d
+
+    def setPred(self, p):
+        self.pred = p
+
+    def getPred(self):
+        return self.pred
+
+    def getDistance(self):
+        return self.dist
+
+    def getColor(self):
+        return self.color
+
 
 class Graph:
     def __init__(self):
