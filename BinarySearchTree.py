@@ -15,6 +15,144 @@ class BinarySearchTree:
     def __iter__(self):
         return self.root.__iter__()
 
+        def put(self,key,val)
+        if self.root:
+            self._put(key,val,self.root)
+        else:
+            self.root = TreeNode(key,val)
+        self.size = self.size + 1
+
+    def _put(self,key,val,currentNode):
+        if key < currentNode.key:
+            if currentNode.hasLeftChild():
+                self._put(key,val,currentNode.leftChild)
+            else:
+                currentNode.leftChild = TreeNode(key,val,parent=currentNode)
+        else:
+            if currentNode.hasRightChild():
+                self._put(key,val,currentNode.rightChild)
+            else:
+                currentNode.rightChild = TreeNode(key,val,parent=currentNode)
+
+    def __setitem__(self,k,v):
+        self.put(k,v)
+
+    def get(self,key):
+        if self.root:
+            res = self._get(key,self.root)
+            if res:
+                return res.payload
+            else:
+                return None
+        else:
+            return None
+
+    def _get(self,key,currentNode):
+        if not currentNode:
+            return None
+        elif currentNode.key == key:
+            return currentNode
+        elif key < currentNode.key:
+            return self._get(key,currentNode.leftChild)
+        else:
+            return self._get(key, currentNode.rightChild)
+
+    def __getitem__(self,key):
+        res = self.get(key)
+        if res:
+            return res
+        else:
+            raise KeyError('Error, key not in tree')
+        
+
+    def __contains__(self,key):
+        if self._get(key,self.root):
+            return True
+        else:
+            return False
+
+    def delete(self.key):
+        if self.size > 1:
+            nodeToRemove = self._get(key,self.root)
+            if nodeToRemove:
+                self.remove(nodeToRemove)
+                self.size = self.size-1
+            else:
+                raise KeyError('Error, key not in tree')
+            elif self.size == 1 and self.root.key == key:
+                self.root = None
+                self.size = self.size - 1
+            else:
+                raise KeyError('Error, key not in tree')
+
+    def __delitem__(self,key):
+        self.delete(key)
+
+    def remove(self,currentNode):
+        if currentNode.isLeaf():
+            if currentNode == currentNode.parent.leftChild:
+                currentNode.parent.leftChild = None
+            else:
+                currentNode.parent.rightchild = None
+        elif currentNode.hasBothChildren(): #interior
+            succ = currentNode.findSuccessor()
+            succ.spliceOut()
+            currentNode.key = succ.key
+            currentNode.payload = succ.payload
+        else: # this node has one child
+            if currentNode.hasLiftChild():
+                if currentNode.isLeftChild():
+                    currentNode.leftChild.parent = currentNode.parent
+                    currentNode.parent.leftChild = currentNode.leftChild
+                elif currentNode.isRightChild():
+                    currentNode.leftChild.parent = currentNode.parent
+                    currentNode.parent.rightChild = currentNode.leftChild
+                else:
+                    currentNode.replaceNodeData(currentNode.leftChild.key,
+                                    currentNode.leftChild.payload,
+                                    currentNode.leftChild.leftChild,
+                                    currentNode.leftchild.rightChild)
+            else:
+                if currentNod.ifLeftChild():
+                    currentNode.rightChild.parent = currentNode.parent
+                    currentNode.parent.leftChild = currentNode.rightChild
+                elif currentNode.isRightChild():
+                    currentNode.rightChild.parent = currentNode.parent
+                    currentNode.parent.rightChild = currentNode.rightChild
+                else:
+                    currentNode.replaceNodeData(currentNode.rightChild.key,
+                                        currentNode.rightChild.payload,
+                                        currentNode.rightChild.leftChild,
+                                        currentNode.rightChild.rightChild)
+
+    def inorder(self):
+        self._inorder(self.root)
+
+    def _inorder(self,tree):
+        if tree != None:
+            self._inorder(tree.leftChild)
+            print(tree.key)
+            self._inorder(tree.rightChild)
+
+    def postorder(self):
+        self._postorder(self.root)
+
+    def _postorder(self, tree):
+        if tree:
+            self._portorder(tree.rightChild)
+            self._portorder(tree.leftchild)
+            print(tree.key)
+
+    def preorder(self):
+        self._preorder(self,self.root)
+
+    def _preorder(self,tree):
+        if tree:
+            print(tree.key)
+            self._preorder(tree.leftChild)
+            self._preorder(tree.rightChild)
+
+
 class TreeNode:
     def __init__(self, key, val, left=None, right=None, parent=None):
         self.key = key
@@ -22,6 +160,7 @@ class TreeNode:
         self.leftChild = left
         self.rightChild = right
         self.parent = parent
+        self.balanceFactor = 0
 
     def hasLeftChild(self):
         return self.leftChild
@@ -55,27 +194,12 @@ class TreeNode:
         if self.hasLeftChild():
             self.leftChild.parent = self
         if self.hasRightChild():
-            self.rightchild.parent = self
+            self.rightChild.parent = self
 
-    def put(self,key,val)
-        if self.root:
-            self._put(key,val,self.root)
-        else:
-            self.root = TreeNode(key,val)
-        self.size = self.size + 1
-    def _put(self,key,val,currentNode):
-        if key < currentNode.key:
-            if currentNode.hasLeftChild():
-                self._put(key,val,currentNode.leftChild)
-            else:
-                currentNode.leftChild = TreeNode(key,val,parent=currentNode)
-        else:
-            if currentNode.hasRightChild():
-                self._put(key,val,currentNode.rightChild)
-            else:
-                currentNode.rightChild = TreeNode(key,val,parent=currentNode)
 
-    def _setitem_(self,k,v):
-        self.put(k,v)
+# continue from def findSuccessor at https://github.com/bnmnetp/pythonds/blob/master/trees/bst.py
 
-    # continue with listing 5...
+
+
+
+
