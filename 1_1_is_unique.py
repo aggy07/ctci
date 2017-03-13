@@ -1,4 +1,5 @@
-
+# Determing if a string has all unique chars. 
+# Try without additional data structures?
 # First Try
 def isunique(str):
     chars = {}
