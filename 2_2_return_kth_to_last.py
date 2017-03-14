@@ -1,11 +1,10 @@
-# create LinkedList.py 
-# import into answer file
-# test
-# LEARNING learn to implement a linked list class
+
+# Find kth to last element of LL
 # Hints:#8, #25, #41, #67, #126
 
 from LinkedList import LinkedList
 
+# trivial solution when length known
 def kth_to_last(ll, k):
     length = len(ll)
     
@@ -20,8 +19,8 @@ def kth_to_last(ll, k):
     i = 0
 
     while current.next:
-        print('i: {} | current idx: {} | current node: {}'.format(i,length-k, current))
-        print('i: {} | current idx: {} | next node: {}'.format(i+1,length-k, current.next))
+        # print('i: {} | current idx: {} | current node: {}'.format(i,length-k, current))
+        # print('i: {} | current idx: {} | next node: {}'.format(i+1,length-k, current.next))
         if i == length - k:
             return current
         elif i+1 == length - k:
@@ -30,7 +29,7 @@ def kth_to_last(ll, k):
             i += 1
             current = current.next
 
-# recursive
+# iterative
 def kth_to_last2(ll, k):
     p1 = p2 = ll.head
     
@@ -45,6 +44,9 @@ def kth_to_last2(ll, k):
         p2 = p2.next
 
     return p2
+
+
+#TOD): recursive solutions A and C
 
 if __name__ == '__main__':
 
