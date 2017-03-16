@@ -6,6 +6,7 @@
 # check if left node is <= root
 # check if right node is < root
 # must visit every node.
+# solution from text
 
 
 class Node():
@@ -14,10 +15,26 @@ class Node():
         self.right = None
         self.value = value
 
+last_printed = None
 def validate_bst(root):
-    if root != None:
-    
+    global last_printed
+    if root == None:    
+        print('called on root None')
+        return True
+    # print('called on {}, lp {}, left {}, right {}'.format(root.value, last_printed, root.left.value if root.left else 'None', root.right.value if root.right else 'None'))
+    if not validate_bst(root.left):
+        return False
+    if last_printed != None and root.value <= last_printed:
+        return False
+    last_printed = root.value
+    # print('root {} lp assigned {}'.format(root.value, last_printed))
+
+    if not validate_bst(root.right):
+        return False
+
     return True
+
+
 
 
 if __name__ == '__main__':
@@ -25,10 +42,9 @@ if __name__ == '__main__':
     root.left = Node(3)
     root.left.right = Node(4)
     root.left.left = Node(2)
-    # root.left.left.left = Node(1)
     root.right = Node(7)
     root.right.right = Node(8)
-    root.right.left = Node(70)
+    root.right.left = Node(6)
 
     print(validate_bst(root))
 
